@@ -5,26 +5,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
 import com.urbina.isaac.jetpackcompose.ui.theme.JetpackComposeTheme
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             //ComposeExample()
             //ColumnExample()
             //RowExample()
-            BoxExample()
+            //BoxExample()
+            PopupExample()
         }
     }
 }
@@ -96,5 +99,47 @@ fun BoxExample() {
         ) {
             Text(text = "+")
         }
+    }
+}
+
+@Composable
+fun PopupExample() {
+    var popupControl by remember {
+        mutableStateOf(false)
+    }
+    TextButton(onClick = { popupControl = true }) {
+        Text(text = "Open normal popup")
+    }
+    if (popupControl) {
+        Popup(
+//            alignment = Alignment.Center,
+//            offset = IntOffset(0, 700),
+            onDismissRequest = { popupControl = false },
+//            properties = PopupProperties(
+//                focusable = true,
+//                dismissOnBackPress = true,
+//                excludeFromSystemGesture = true
+//            ),
+            popupPositionProvider = WindowCenterOffsetPositionProvider()
+        ) {
+            Greeting(name = "Popup text here")
+        }
+    }
+}
+
+class WindowCenterOffsetPositionProvider(
+    private val x: Int = 0,
+    private val y: Int = 0
+) : PopupPositionProvider {
+    override fun calculatePosition(
+        anchorBounds: IntRect,
+        windowSize: IntSize,
+        layoutDirection: LayoutDirection,
+        popupContentSize: IntSize
+    ): IntOffset {
+        return IntOffset(
+            (windowSize.width - popupContentSize.width) / 2 + x,
+            (windowSize.height - popupContentSize.height) / 2 + y
+        )
     }
 }
